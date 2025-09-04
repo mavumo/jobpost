@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>THE JOB POST — Mini Podcast Series</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="THE JOB POST is a bite‑sized audio series for job seekers, working professionals, employers and recruiters—spotlighting South Africa and Nigeria with a sharp eye on global trends." />
+
+  <!--
+    DESIGN NOTES
+    1) Tweak the CSS variables below to match your brand (pulled loosely from modern job boards).
+    2) Drop this file into Framer/Pages as a standalone page, or embed the <main> into your layout.
+  -->
+  <style>
+    :root{
+      /* === Theme tokens — adjust to match jobbyist-beta.lovable.app === */
+      --brand: #0ea5e9;             /* Accent */
+      --brand-ink: #0369a1;         /* Accent-contrast */
+      --ink: #0f172a;               /* Primary text */
+      --muted-ink: #334155;         /* Secondary text */
+      --surface: #ffffff;           /* Card bg */
+      --bg: #f6f8fb;                /* Page bg */
+      --ring: rgba(14,165,233,.35); /* Focus ring */
+      --radius: 16px;               /* >= 15px as requested */
+      --shadow-1: 0 10px 20px rgba(2, 6, 23, .08), 0 6px 6px rgba(2, 6, 23, .06);
+      --shadow-2: 0 20px 30px rgba(2, 6, 23, .10), 0 8px 12px rgba(2, 6, 23, .06);
+      --grid-gap: 1.25rem;
+      --container: 1200px;
+    }
+    /* Reset-ish */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body{
+      margin: 0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    a{ color: var(--brand-ink); text-decoration: none; }
+    a:hover{ text-decoration: underline; }
+
+    /* Layout */
+    .container{
+      width: min(var(--container), 100%);
+      margin-inline: auto;
+      padding: 0 20px;
+    }
+
+    /* Hero */
+    .hero{
+      background: radial-gradient(1200px 400px at 20% -20%, rgba(14,165,233,.10), transparent 60%),
+                  radial-gradient(1000px 400px at 90% 0%, rgba(14,165,233,.08), transparent 60%),
+                  linear-gradient(180deg, #ffffff, #f7fbff 60%, #f3f7fb 100%);
+      border-bottom: 1px solid rgba(2,6,23,.06);
+    }
+    .hero-inner{
+      padding: clamp(32px, 4vw, 56px) 0 clamp(18px, 2.4vw, 24px);
+    }
+    .eyebrow{
+      display: inline-block;
+      font-size: .8rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--brand-ink);
+      background: rgba(14,165,233,.10);
+      padding: .3rem .6rem;
+      border-radius: 999px;
+    }
+    h1{
+      margin: .6rem 0 .4rem;
+      font-size: clamp(2rem, 3.2vw + .5rem, 3rem);
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+    }
+    .subtitle{
+      margin: 0 0 1rem;
+      max-width: 60ch;
+      color: var(--muted-ink);
+      font-size: clamp(1rem, 1.2vw + .5rem, 1.125rem);
+    }
+
+    /* Search */
+    .search-wrap{
+      position: sticky; top: 0; z-index: 20;
+      background: linear-gradient(#fff, rgba(255,255,255,.92) 30%, rgba(255,255,255,.88));
+      backdrop-filter: saturate(140%) blur(6px);
+      border-bottom: 1px solid rgba(2,6,23,.06);
+    }
+    .search-inner{
+      padding: .8rem 0;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: center;
+      gap: .75rem;
+    }
+    .search{
+      position: relative;
+    }
+    .search input[type="search"]{
+      width: 100%;
+      padding: .9rem 1rem .9rem 2.6rem;
+      border-radius: 999px;
+      border: 1px solid rgba(2,6,23,.12);
+      background: var(--surface);
+      box-shadow: var(--shadow-1);
+      outline: none;
+      font: inherit;
+      color: var(--ink);
+    }
+    .search input[type="search"]::placeholder{ color: #94a3b8; }
+    .search input[type="search"]:focus{
+      border-color: var(--brand);
+      box-shadow: 0 0 0 4px var(--ring), var(--shadow-2);
+    }
+    .search svg{
+      position: absolute; left: .95rem; top: 50%; transform: translateY(-50%);
+      width: 18px; height: 18px; color: #64748b;
+      pointer-events: none;
+    }
+    .count{
+      font-size: .95rem; color: var(--muted-ink);
+      white-space: nowrap;
+    }
+
+    /* Episodes grid */
+    .episodes{
+      padding: 24px 0 80px;
+    }
+    .grid{
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: var(--grid-gap);
+    }
+    @media (min-width: 768px){
+      .grid{ grid-template-columns: 1fr 1fr; }
+    }
+
+    /* Episode card */
+    .card{
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      gap: .6rem;
+      background: var(--surface);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-1);
+      border: 1px solid rgba(2,6,23,.06);
+      padding: 1rem;
+      transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease;
+    }
+    .card:hover{ transform: translateY(-2px); box-shadow: var(--shadow-2); border-color: rgba(2,6,23,.12); }
+    .card h3{
+      margin: .2rem 0 .25rem;
+      font-size: 1.05rem; line-height: 1.3;
+    }
+    .meta{
+      margin: 0; font-size: .88rem; color: var(--muted-ink);
+    }
+    .tags{
+      display: flex; flex-wrap: wrap; gap: .4rem; margin: .25rem 0 .2rem;
+    }
+    .tag{
+      font-size: .72rem; font-weight: 600; color: var(--brand-ink);
+      background: rgba(14,165,233,.10);
+      border: 1px solid rgba(14,165,233,.20);
+      padding: .18rem .5rem; border-radius: 999px;
+    }
+    .desc{
+      margin: .3rem 0 .4rem; color: var(--ink); font-size: .95rem;
+    }
+    audio{ width: 100%; display: block; border-radius: 10px; }
+    .byline{
+      display: flex; gap: .5rem; align-items: center; justify-content: space-between;
+      color: var(--muted-ink); font-size: .82rem; margin-top: .25rem;
+    }
+
+    /* Loader / sentinel */
+    .loader{
+      display: grid; place-items: center;
+      padding: 24px; color: var(--muted-ink);
+    }
+    .spinner{
+      width: 22px; height: 22px; border-radius: 50%;
+      border: 3px solid rgba(2,6,23,.12);
+      border-top-color: var(--brand);
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin{ to { transform: rotate(360deg); } }
+
+    .no-results{
+      grid-column: 1 / -1;
+      background: linear-gradient(180deg, #fff, #fff);
+      border: 1px dashed rgba(2,6,23,.18);
+      border-radius: var(--radius);
+      padding: 18px;
+      color: var(--muted-ink);
+      text-align: center;
+    }
+
+    /* Accessibility / motion */
+    @media (prefers-reduced-motion: reduce){
+      .card, .search input[type="search"]{ transition: none; }
+    }
+  </style>
+</head>
+<body>
+  <!-- HERO -->
+  <header class="hero">
+    <div class="container hero-inner">
+      <span class="eyebrow" aria-label="Podcast Series">Podcast</span>
+      <h1>THE JOB POST</h1>
+      <p class="subtitle">
+        Bite‑sized audio for job seekers, working professionals, employers, and recruiters. We spotlight South Africa and Nigeria while tracking global trends that actually move the market—hiring shifts, skills demand, salary signals, and the human side of work.
+      </p>
+    </div>
+
+    <!-- SEARCH (sticky) -->
+    <div class="search-wrap">
+      <div class="container search-inner">
+        <div class="search" role="search">
+          <svg aria-hidden="true" viewBox="0 0 24 24"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27a6.471 6.471 0 0 0 1.57-4.23 6.5 6.5 0 1 0-6.5 6.5 6.471 6.471 0 0 0 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/></svg>
+          <label class="sr-only" for="q">Search episodes</label>
+          <input id="q" type="search" placeholder="Search episodes, topics, or regions (e.g., CV, Nigeria, salary)…" autocomplete="off" />
+        </div>
+        <div class="count" aria-live="polite"><span id="count">25</span> episodes</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- EPISODES -->
+  <main class="episodes">
+    <div class="container">
+      <div id="grid" class="grid" aria-live="polite" aria-busy="false"></div>
+      <div id="sentinel" class="loader" aria-hidden="true">
+        <div class="spinner" title="Loading more episodes"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- JSON-LD (basic) -->
+  <script type="application/ld+json">
+  {
+    "@context":"https://schema.org",
+    "@type":"PodcastSeries",
+    "name":"THE JOB POST",
+    "inLanguage":"en",
+    "genre":["Careers","Business"],
+    "description":"Bite‑sized audio for job seekers, working professionals, employers and recruiters. Focus on South Africa and Nigeria with relevant global trends.",
+    "publisher":{
+      "@type":"Organization",
+      "name":"Jobbyist"
+    }
+  }
+  </script>
+
+  <script>
+    // ======== Data (25 sample episodes) ========
+    // NOTE: Replace `audio` URLs with your actual episode MP3s.
+    const EPISODES = [
+      {
+        id: "01",
+        title: "SA Salary Signals: What’s Moving the Market",
+        region: ["South Africa"],
+        date: "2025-08-28",
+        duration: "06:12",
+        desc: "Quick scan of salary bands in tech, finance, and operations—plus where negotiation leverage is shifting.",
+        tags: ["Salaries","Hiring","Trends"],
+        audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+      },
+      {
+        id: "02",
+        title: "Nigeria’s Skills Gap: Where Short Courses Pay Off",
+        region: ["Nigeria"],
+        date: "2025-08-26",
+        duration: "05:03",
+        desc: "From data analysis to product ops—short, stackable wins for employability in Lagos and Abuja.",
+        tags: ["Nigeria","Upskilling","Data"],
+        audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
+      },
+      {
+        id: "03",
+        title: "Global: AI-Assisted Hiring Without the Hype",
+        region: ["Global"],
+        date: "2025-08-23",
+        duration: "07:01",
+        desc: "What AI actually does in screening and interviews—and how to prepare without gaming the system.",
+        tags: ["AI","Interviews","Screening"],
+        audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+      },
+      {
+        id: "04",
+        title: "Remote Roles in SA: Where They’re Still Growing",
+        region: ["South Africa"],
+        date: "2025-08-21",
+        duration: "04:19",
+        desc: "Niches that keep hiring remote: customer success, QA, content ops, and finance assistants.",
+        tags: ["Remote","South Africa","Operations"],
+        audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3"
+      },
+      {
+        id: "05",
+        title: "Nigeria: Entry-Level Pathways that Beat ‘Experience Required’",
+        region: ["Nigeria"],
+        date: "2025-08-18",
+        duration: "05:46",
+        desc: "Portfolios, certs, and ‘micro-internships’—how candidates are landing first roles faster.",
+        tags: ["Entry-level","Nigeria","Portfolio"],
+        audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+      },
+      {
+        id: "06",
+        title: "Read the Room: 90-Day Plans for New Hires",
+        region: ["Global"],
+        date: "2025-08-16",
+        duration: "06:08",
+        desc: "A crisp template for impressing your manager without tactical cosplay.",
+        tags: ["Onboarding","Management","Playbook"],
+        audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
+      },
+      {
+        id: "07",
+        title: "SA: CV Edits That Survive 6-Second Scans",
+        region: ["South Africa"],
+        date: "2025-08-14",
+        duration: "04:41",
+        desc: "Bullet density, impact verbs, and the two things recruiters actually read.",
+        tags: ["CV","South Africa","Recruiters"],
+        audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+      },
+      {
+        id: "08",
+        title: "Global: Portfolio vs. Resume—Which Wins?",
+        region: ["Global"],
+        date: "2025-08-12",
+        duration: "05:58",
+        desc: "When a one‑pager outruns a website, and when to ship both.",
+        tags: ["Portfolio","Resume","Hiring"],
+        audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3"
+      },
+      {
+        id: "09",
+        title: "Nigeria: Recruiters’ Shortlist Criteria in 2025",
+        region: ["Nigeria"],
+        date: "2025-08-10",
+        duration: "06:15",
+        desc: "Signal vs. noise in screening—plus the micro‑projects that jump the queue.",
+        tags: ["Recruiters","Shortlist","Nigeria"],
+        audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+      },
+      {
+        id: "10",
+        title: "SA: Where Apprenticeships Are Quietly Thriving",
+        region: ["South Africa"],
+        date: "2025-08-08",
+        duration: "05:26",
+        desc: "Skilled trades, creative ops, and IT support pipelines that don’t make headlines.",
+        tags: ["Apprenticeship","South Africa","Skilled trades"],
+        audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
+      },
+      {
+        id: "11",
+        title: "Global: The Good, the Bad & the Burnout",
+        region: ["Global"],
+        date: "2025-08-06",
+        duration: "06:33",
+        desc: "Finding pace without flex‑washing; practical rituals that prevent crispy edges.",
+        tags: ["Wellbeing","Remote","Productivity"],
+        audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+      },
+      {
+        id: "12",
+        title: "Nigeria: Salary Transparency—What’s Feasible Now",
+        region: ["Nigeria"],
+        date: "2025-08-03",
+        duration: "04:38",
+        desc: "Posting ranges without creating chaos; what candidates & employers gain.",
+        tags: ["Salaries","Transparency","Nigeria"],
+        audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3"
+      },
+      {
+        id: "13",
+        title: "SA: Interview Loops—Trim the Fluff",
+        region: ["South Africa"],
+        date: "2025-08-01",
+        duration: "05:04",
+        desc: "Two‑step loops that still feel rigorous (and human).",
+        tags: ["Interviews","Hiring","South Africa"],
+        audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+      },
+      {
+        id: "14",
+        title: "Global: The Skills Behind Product Ops",
+        region: ["Global"],
+        date: "2025-07-30",
+        duration: "06:22",
+        desc: "Documentation kung‑fu, stakeholder judo, and analytics without drama.",
+        tags: ["Product Ops","Skills","Global"],
+        audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
+      },
+      {
+        id: "15",
+        title: "Nigeria: How SMEs Can Hire Like Startups",
+        region: ["Nigeria"],
+        date: "2025-07-28",
+        duration: "05:12",
+        desc: "Scorecards, async trials, and realistic onboarding for small teams.",
+        tags: ["SME","Hiring","Nigeria"],
+        audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+      },
+      {
+        id: "16",
+        title: "SA: ATS‑Friendly Without Soul‑Sucking",
+        region: ["South Africa"],
+        date: "2025-07-26",
+        duration: "05:55",
+        desc: "Keyword strategy that still reads like a human wrote it.",
+        tags: ["ATS","CV","South Africa"],
+        audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3"
+      },
+      {
+        id: "17",
+        title: "Global: The Rise of Fractional Roles",
+        region: ["Global"],
+        date: "2025-07-23",
+        duration: "06:35",
+        desc: "Why ‘fractional’ isn’t just consulting with a new hat.",
+        tags: ["Fractional","Contract","Trends"],
+        audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+      },
+      {
+        id: "18",
+        title: "Nigeria: Career Pivots that Actually Land",
+        region: ["Nigeria"],
+        date: "2025-07-20",
+        duration: "05:40",
+        desc: "From admin to operations, from CS to product—mapping adjacent skills.",
+        tags: ["Career change","Nigeria","Skills"],
+        audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
+      },
+      {
+        id: "19",
+        title: "SA: Early Career—The Projects That Matter",
+        region: ["South Africa"],
+        date: "2025-07-18",
+        duration: "04:59",
+        desc: "Which small wins recruiters over‑index on when experience is thin.",
+        tags: ["Entry-level","Projects","South Africa"],
+        audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+      },
+      {
+        id: "20",
+        title: "Global: Negotiation Without the Awkward",
+        region: ["Global"],
+        date: "2025-07-16",
+        duration: "06:18",
+        desc: "Anchors, ranges, and timing—tactical scripts without sounding like a robot.",
+        tags: ["Negotiation","Salaries","Global"],
+        audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3"
+      },
+      {
+        id: "21",
+        title: "Nigeria: Remote‑First Realities in 2025",
+        region: ["Nigeria"],
+        date: "2025-07-14",
+        duration: "05:11",
+        desc: "Power, internet, and async habits that make distributed work…work.",
+        tags: ["Remote","Infrastructure","Nigeria"],
+        audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+      },
+      {
+        id: "22",
+        title: "SA: Job Ads That Don’t Waste Time",
+        region: ["South Africa"],
+        date: "2025-07-12",
+        duration: "05:27",
+        desc: "Scorecards, must‑haves vs. nice‑to‑haves, and transparent ranges.",
+        tags: ["Job ads","Hiring","South Africa"],
+        audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"
+      },
+      {
+        id: "23",
+        title: "Global: Certifications That Still Signal Skill",
+        region: ["Global"],
+        date: "2025-07-10",
+        duration: "05:44",
+        desc: "When a cert opens doors—and when a project beats a badge.",
+        tags: ["Certification","Skills","Global"],
+        audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+      },
+      {
+        id: "24",
+        title: "Nigeria: Recruiter Q&A—The 3 Real Red Flags",
+        region: ["Nigeria"],
+        date: "2025-07-08",
+        duration: "04:52",
+        desc: "Inconsistencies, ghost projects, and the missing metric.",
+        tags: ["Recruiters","Red flags","Nigeria"],
+        audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-4.mp3"
+      },
+      {
+        id: "25",
+        title: "SA & Global: Where the Next Jobs Will Be",
+        region: ["South Africa","Global"],
+        date: "2025-07-05",
+        duration: "06:41",
+        desc: "Customer ops, compliance tech, climate data, and the AI‑adjacent roles hiring now.",
+        tags: ["Forecast","Hiring","South Africa","Global"],
+        audio: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"
+      }
+    ];
+
+    // ======== Utilities ========
+    const $ = sel => document.querySelector(sel);
+    const grid = $('#grid');
+    const sentinel = $('#sentinel');
+    const countEl = $('#count');
+    const searchInput = $('#q');
+
+    const PAGE_SIZE = 5;
+    let filtered = EPISODES.slice();
+    let rendered = 0;
+
+    const fmtDate = d => new Date(d + 'T12:00:00Z').toLocaleDateString(undefined, { year:'numeric', month:'short', day:'2-digit' });
+
+    function tagPills(tags = [], regions = []) {
+      const unique = [...new Set([...(tags||[]), ...(regions||[])])];
+      return unique.map(t => `<span class="tag">${t}</span>`).join('');
+    }
+
+    function cardTemplate(ep){
+      return `
+        <article class="card" id="episode-${ep.id}" aria-label="Episode ${ep.id}: ${ep.title}">
+          <div>
+            <p class="meta">Episode ${ep.id} • ${fmtDate(ep.date)} • ${ep.duration}</p>
+            <h3>${ep.title}</h3>
+            <div class="tags">${tagPills(ep.tags, ep.region)}</div>
+            <p class="desc">${ep.desc}</p>
+          </div>
+          <div>
+            <audio controls preload="none" src="${ep.audio}" aria-label="Audio for episode ${ep.id}: ${ep.title}" controlsList="nodownload"></audio>
+          </div>
+          <div class="byline">
+            <span>THE JOB POST</span>
+            <a href="#episode-${ep.id}" aria-label="Link to episode ${ep.id}">Permalink</a>
+          </div>
+        </article>
+      `;
+    }
+
+    function renderMore(n = PAGE_SIZE){
+      const next = filtered.slice(rendered, rendered + n);
+      if(!next.length){ return false; }
+      const frag = document.createDocumentFragment();
+      next.forEach(ep => {
+        const div = document.createElement('div');
+        div.innerHTML = cardTemplate(ep);
+        frag.appendChild(div.firstElementChild);
+      });
+      grid.appendChild(frag);
+      rendered += next.length;
+      countEl.textContent = String(filtered.length);
+      return true;
+    }
+
+    function resetAndRender(){
+      rendered = 0;
+      grid.innerHTML = '';
+      renderMore(PAGE_SIZE);
+      toggleSentinel();
+    }
+
+    function toggleSentinel(){
+      const hasMore = rendered < filtered.length;
+      sentinel.style.display = hasMore ? 'grid' : 'none';
+      sentinel.setAttribute('aria-hidden', hasMore ? 'false' : 'true');
+    }
+
+    // Pause other audios when one plays
+    grid.addEventListener('play', (e) => {
+      if(e.target.tagName !== 'AUDIO') return;
+      grid.querySelectorAll('audio').forEach(a => { if(a !== e.target){ a.pause(); } });
+    }, true);
+
+    // Debounce helper
+    function debounce(fn, ms){
+      let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), ms); };
+    }
+
+    const doSearch = debounce(() => {
+      const q = searchInput.value.trim().toLowerCase();
+      if(!q){
+        filtered = EPISODES.slice();
+        resetAndRender();
+        return;
+      }
+      filtered = EPISODES.filter(ep => {
+        const hay = [
+          ep.title, ep.desc, ...(ep.tags||[]), ...(ep.region||[])
+        ].join(' ').toLowerCase();
+        return hay.includes(q);
+      });
+      if(!filtered.length){
+        grid.innerHTML = `<div class="no-results">No episodes match “${escapeHtml(q)}”. Try keywords like <em>CV</em>, <em>salary</em>, <em>South Africa</em>, or <em>Nigeria</em>.</div>`;
+        countEl.textContent = '0';
+        sentinel.style.display = 'none';
+        return;
+      }
+      resetAndRender();
+    }, 160);
+
+    function escapeHtml(s){ return s.replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m])); }
+
+    // Intersection Observer for infinite loading
+    const io = new IntersectionObserver((entries) => {
+      for(const entry of entries){
+        if(entry.isIntersecting){
+          const added = renderMore(PAGE_SIZE);
+          toggleSentinel();
+          if(!added){ io.unobserve(sentinel); }
+        }
+      }
+    }, { rootMargin: '800px 0px' });
+
+    // Init
+    (function init(){
+      resetAndRender();
+      io.observe(sentinel);
+      searchInput.addEventListener('input', doSearch);
+      // Respect hash deep-linking (#episode-XX)
+      if(location.hash && document.getElementById(location.hash.slice(1))){
+        document.getElementById(location.hash.slice(1)).scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    })();
+  </script>
+</body>
+</html>
